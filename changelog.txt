@@ -1,0 +1,10 @@
+---------------------------------------------------------------------------------------------------
+Version: 0.6.2
+Date: 2024-10-16
+  Changes:
+    - Added "Detector value multiplier" as mod configuration variable in settings. The default value is 60 to be backwards compatible. But I recommend 1000000 for more granular fine tuning.
+---------------------------------------------------------------------------------------------------
+Version: 0.6.1
+Date: 2021-06-13
+  Changes:
+    - Original version from Schorty.
