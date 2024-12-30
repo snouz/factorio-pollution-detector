@@ -14,12 +14,12 @@ data:extend({
     },
     unit =
     {
-      count = 1,
+      count = 100,
       ingredients = {
         {"automation-science-pack", 1},
         {"logistic-science-pack", 1}
       },
-      time = 1
+      time = 30
     },
     order = "d-a-a"
   }

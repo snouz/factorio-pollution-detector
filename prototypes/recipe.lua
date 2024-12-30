@@ -6,7 +6,8 @@ data:extend({
     enabled = "false",
     ingredients =
     {
-      {"constant-combinator", 1}
+      {"constant-combinator", 1},
+      {"advanced-circuit", 5}
     },
     result = "pollution-detector"
   }
