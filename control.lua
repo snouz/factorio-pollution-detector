@@ -29,19 +29,22 @@ function OnEntityCreated(event)
     entity = event.created_entity
   end
 
-	if entity.name == "pollution-detector" then
+  if entity.name == "pollution-detector" then
+    if global == nil then
+      global = {}
+    end
+    global.Pollution_Detectors = {}
     table.insert(global.Pollution_Detectors, entity)
-    
     -- register to events after placing the first sensor
     if #global.Pollution_Detectors == 1 then
       script.on_event(defines.events.on_tick, OnTick)
       script.on_event({defines.events.on_pre_player_mined_item, defines.events.on_robot_pre_mined, defines.events.on_entity_died}, OnEntityRemoved)
     end
-	end
+  end
 end
 
 function OnEntityRemoved(event)
-	if event.entity.name == "pollution-detector" then
+  if event.entity.name == "pollution-detector" then
 
     for i=#global.Pollution_Detectors, 1, -1 do
       if global.Pollution_Detectors[i].unit_number == event.entity.unit_number then
@@ -62,11 +65,17 @@ function OnTick(event)
   local offset = event.tick % update_interval
   for i=#global.Pollution_Detectors - offset, 1, -1 * update_interval do  
     local pollution_detector = global.Pollution_Detectors[i]    
-    local pollution_count = floor(pollution_detector.surface.get_pollution({pollution_detector.position.x, pollution_detector.position.y}) * multiplier)
-    local params = {
-      {index = 1, signal = {type = "virtual", name = "pd-pollution"}, count = pollution_count}
-    }
-    pollution_detector.get_control_behavior().parameters = params
+    local pollution_count = floor(pollution_detector.surface.get_pollution(pollution_detector.position) * multiplier)
+    local signal = { value = "pd-pollution", min = pollution_count }
+    -- Section clear code: copied from "PollutionCombinator-JamieFork".
+    for _, section in pairs(pollution_detector.get_control_behavior().sections) do
+        pollution_detector.get_control_behavior().remove_section(section.index);
+    end
+    local section = pollution_detector.get_control_behavior().add_section("");
+    if (not section) then
+        return false;
+    end
+    section.set_slot(1, signal)
   end
 end
 
@@ -74,8 +83,11 @@ end
 do---- Init ----
 local function init_Pollution_Detectors()
   -- gather all pollution detectors on every surface in case another mod added some
-	global.Pollution_Detectors = {}
-   for _, surface in pairs(game.surfaces) do
+  if global == nil then
+    global = {}
+  end
+  global.Pollution_Detectors = {}
+  for _, surface in pairs(game.surfaces) do
     pollution_detectors = surface.find_entities_filtered {
       name = "pollution-detector",
     }
@@ -86,11 +98,14 @@ local function init_Pollution_Detectors()
 end
 
 local function init_events()
-	script.on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, defines.events.script_raised_built, defines.events.script_raised_revive}, OnEntityCreated)
-	if global.Pollution_Detectors and next(global.Pollution_Detectors) then
-		script.on_event(defines.events.on_tick, OnTick)
-		script.on_event({defines.events.on_pre_player_mined_item, defines.events.on_robot_pre_mined, defines.events.on_entity_died}, OnEntityRemoved)
-	end
+    script.on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, defines.events.script_raised_built, defines.events.script_raised_revive}, OnEntityCreated)
+    if global == nil then
+      global = {}
+    end
+    if global.Pollution_Detectors and next(global.Pollution_Detectors) then
+        script.on_event(defines.events.on_tick, OnTick)
+        script.on_event({defines.events.on_pre_player_mined_item, defines.events.on_robot_pre_mined, defines.events.on_entity_died}, OnEntityRemoved)
+    end
 end
 
 script.on_load(function()
@@ -104,7 +119,7 @@ end)
 
 script.on_configuration_changed(function(data)
   init_Pollution_Detectors()
-	init_events()
+  init_events()
 end)
 
 end

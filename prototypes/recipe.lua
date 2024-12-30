@@ -3,12 +3,12 @@ data:extend({
     type = "recipe",
     name = "pollution-detector",    
     energy_required = 1.0,
-    enabled = "false",
+    enabled = false,
     ingredients =
     {
-      {"constant-combinator", 1},
-      {"advanced-circuit", 5}
+      {type="item", name="constant-combinator", amount=1},
+      {type="item", name="electronic-circuit", amount=5}
     },
-    result = "pollution-detector"
+    results = {{type="item", name="pollution-detector", amount=1}}
   }
 })
