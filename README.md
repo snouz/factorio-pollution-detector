@@ -1,2 +1,4 @@
-# factorio-pollution-detector
-Factorio Mod Pollution detector
+Factorio Mod "Pollution detector"
+
+https://mods.factorio.com/mod/pollution-detector
+
