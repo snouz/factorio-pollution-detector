@@ -1,6 +1,9 @@
 local sensor = table.deepcopy(data.raw["constant-combinator"]["constant-combinator"])
 sensor.name = "pollution-detector"
 sensor.icon = "__pollution-detector__/graphics/icons/pollution-detector.png"
+sensor.icon_draw_specification = {
+  scale = 0.5,
+}
 sensor.minable.result = "pollution-detector"
 sensor.sprites = make_4way_animation_from_spritesheet(
   {
